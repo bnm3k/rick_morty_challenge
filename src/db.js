@@ -4,8 +4,8 @@ import { Database } from "duckdb-async";
 const schemaSQL = `
 CREATE TABLE IF NOT EXISTS location (
   id INTEGER PRIMARY KEY,
-  name STRING,
-  type STRING,
+  name STRING NOT NULL,
+  type STRING NOT NULL,
   dimension STRING,
   created_at DATETIME
 );
@@ -100,6 +100,10 @@ const insertEpisodes = async (db) => {
 
 const insertCharacters = async (db) => {
   // insert characters
+  // As new episodes are released, we expect that certain details about
+  // characters will change. Therefore we do an entire replace. For efficiency,
+  // we might have to upsert, however, new seasons come after a couple of years
+  // and episodes are released weekly, therefore no need to optimize
   const insertChunk = async (characters) => {
     const conn = await db.connect();
     let stmt = await conn.prepare(
@@ -154,7 +158,7 @@ export const getDB = async ({ dbPath, skipDBChecks }) => {
   const db = await Database.create(dbPath);
 
   if (skipDBChecks) {
-    return;
+    return db;
   }
   const conn = await db.connect();
 
@@ -182,7 +186,7 @@ export const getDB = async ({ dbPath, skipDBChecks }) => {
   if (count === expectedCount) {
     console.log("Data is up to date");
     conn.close();
-    return;
+    return db;
   } else {
     console.log(
       `Expect count of ${expectedCount} episodes, got ${count} in DB`
@@ -199,5 +203,5 @@ export const getDB = async ({ dbPath, skipDBChecks }) => {
   await l;
   await c;
 
-  return;
+  return db;
 };
