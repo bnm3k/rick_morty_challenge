@@ -1,4 +1,9 @@
+import Fastify from "fastify";
+// import markoPlugin from "@marko/fastify";
+// import Template from "./template.marko";
+
 import { getDB } from "./db.js";
+
 const main = async () => {
   // config
   const config = {
@@ -6,20 +11,18 @@ const main = async () => {
     dbPath: "app.db",
   };
   const db = await getDB(config);
-  let results;
-  results = await searchLocationsByResidentCharacters(db, "Evil");
-  for (let r of results) {
-    console.log(r);
-  }
-  console.log("--------------");
-  results = await searchLocationsByName(db, "Rick");
-  for (let r of results) {
-    console.log(r);
-  }
-  console.log("--------------");
-  results = await searchLocationsByEpisodeName(db, "Morty");
-  for (let r of results) {
-    console.log(r);
+
+  const app = Fastify({ logger: false });
+
+  app.get("/", async (request, reply) => {
+    return { hello: "world" };
+  });
+
+  try {
+    await app.listen({ port: 3000 });
+  } catch (err) {
+    app.log.error(err);
+    process.exit(1);
   }
 };
 
@@ -45,8 +48,7 @@ const genSearchFn = (matchingLocationsSQL) => {
       else [] end as residents
   from matches l
   left join residents r on l.id = r.location_id
-  order by l.score desc
- `;
+  order by l.score desc`;
 
   return async (db, searchTerm) => {
     const rows = await db.all(sql, searchTerm);
