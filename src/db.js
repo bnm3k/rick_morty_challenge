@@ -149,7 +149,7 @@ const doInsert = async (db, endpoint, insertChunk) => {
   }
 };
 
-const getDB = async ({ dbPath, skipDBChecks }) => {
+export const getDB = async ({ dbPath, skipDBChecks }) => {
   // setup create db instance
   const db = await Database.create(dbPath);
 
@@ -201,14 +201,3 @@ const getDB = async ({ dbPath, skipDBChecks }) => {
 
   return;
 };
-
-const main = async () => {
-  // config
-  const config = {
-    skipDBChecks: false,
-    dbPath: "app.db",
-  };
-  await getDB(config);
-};
-
-main();
