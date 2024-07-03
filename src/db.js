@@ -163,7 +163,7 @@ export const getDB = async ({ dbPath, skipDBChecks }) => {
   const conn = await db.connect();
 
   // set up schema
-  conn.run(schemaSQL);
+  await conn.run(schemaSQL);
 
   // get number of episodes
   const [{ count }] = await conn.all(
@@ -202,6 +202,14 @@ export const getDB = async ({ dbPath, skipDBChecks }) => {
   await e;
   await l;
   await c;
+
+  // after doing all the insertions, we can now create the full text search
+  // indexes
+  await conn.run(`
+  PRAGMA create_fts_index(location, id, name, overwrite=true);
+  PRAGMA create_fts_index(character, id, name, overwrite=true);
+  PRAGMA create_fts_index(episode, id, name, overwrite=true);
+  `);
 
   return db;
 };
