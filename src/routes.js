@@ -14,18 +14,19 @@ const routes = async (app, options) => {
     return null;
   });
 
-  app.post("/characters/:characterID/note", options, function (request, reply) {
+  app.post("/character/:characterID/note", options, async (request, reply) => {
     const validate = request.compileValidationSchema({
       type: "object",
-      required: ["id", "note"],
+      required: ["id", "notes"],
       properties: {
         id: { type: "integer" },
-        note: { type: "string" },
+        notes: { type: "string" },
       },
     });
-    const userInput = request.body;
-    if (validate(userInput) === true) {
-      return { hello: "world" };
+    if (validate(request.body) === true) {
+      const { id, notes } = request.body;
+      await handler.insertNotesOnCharacter(app.db, id, notes);
+      reply.code(204).send();
     } else {
       return validate.errors;
     }

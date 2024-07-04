@@ -135,6 +135,11 @@ const getCharacter = async (db, characterID) => {
   return result;
 };
 
+const insertNotesOnCharacter = async (db, characterID, notes) => {
+  const sql = `update character set notes = ? where id = ?;`;
+  await db.run(sql, notes, characterID);
+};
+
 export default {
   // get locations (id, name and type), plus residents (id, name, status)
   getAllLocationsPlusResidents,
@@ -149,4 +154,5 @@ export default {
   getCharacter,
 
   // insert/update resident note (need id & note)
+  insertNotesOnCharacter,
 };
