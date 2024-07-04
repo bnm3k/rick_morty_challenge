@@ -128,16 +128,17 @@ const getCharacter = async (db, characterID) => {
   const sql = `
   select
       id, name, status, image, notes
-  from character
-  where id = ?;
-    `;
+  from character c
+  join character_notes cn on c.id = cn.character_id
+  where id = ?;`;
   const result = await db.all(sql, characterID);
   return result;
 };
 
 const insertNotesOnCharacter = async (db, characterID, notes) => {
-  const sql = `update character set notes = ? where id = ?;`;
-  await db.run(sql, notes, characterID);
+  const sql = `insert into character_notes values (?, ?)
+               on conflict do update set notes = excluded.notes;`;
+  await db.run(sql, characterID, notes);
 };
 
 export default {

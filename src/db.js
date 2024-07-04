@@ -20,8 +20,12 @@ CREATE TABLE IF NOT EXISTS character(
   origin_location INTEGER,
   last_known_location INTEGER,
   image STRING,
-  created_at DATETIME,
-  notes STRING -- probably move this to local storage (client side)
+  created_at DATETIME
+);
+
+CREATE TABLE IF NOT EXISTS character_notes(
+  character_id INTEGER UNIQUE REFERENCES character(id),
+  notes STRING NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS episode(
