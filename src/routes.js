@@ -14,6 +14,23 @@ const routes = async (app, options) => {
     return null;
   });
 
+  app.post("/characters/:characterID/note", options, function (request, reply) {
+    const validate = request.compileValidationSchema({
+      type: "object",
+      required: ["id", "note"],
+      properties: {
+        id: { type: "integer" },
+        note: { type: "string" },
+      },
+    });
+    const userInput = request.body;
+    if (validate(userInput) === true) {
+      return { hello: "world" };
+    } else {
+      return validate.errors;
+    }
+  });
+
   app.get("/location/:locationID", async (request, reply) => {
     const { locationID } = request.params;
     const [result] = await handler.getLocation(app.db, locationID);
