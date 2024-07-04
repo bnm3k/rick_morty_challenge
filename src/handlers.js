@@ -6,7 +6,7 @@ const genSearchFn = (matchingLocationsSQL) => {
       select
           l.id as location_id,
           list(
-            {'id': c.id, 'name': c.name, 'status': c.status, 'image': c.image}
+            {'id': c.id, 'name': c.name, 'status': c.status}
           ) as residents
       from matches l
       join character c on l.id = c.last_known_location
@@ -81,7 +81,7 @@ const getAllLocationsPlusResidents = (() => {
           select
               l.id as location_id,
               list(
-                {'id': c.id, 'name': c.name, 'status': c.status, 'image': c.image}
+                {'id': c.id, 'name': c.name, 'status': c.status}
               ) as residents
           from location l
           join character c on l.id = c.last_known_location
