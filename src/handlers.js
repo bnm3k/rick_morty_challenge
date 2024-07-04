@@ -1,31 +1,3 @@
-import Fastify from "fastify";
-// import markoPlugin from "@marko/fastify";
-// import Template from "./template.marko";
-
-import { getDB } from "./db.js";
-
-const main = async () => {
-  // config
-  const config = {
-    skipDBChecks: true, // before skipping, check that file is present
-    dbPath: "app.db",
-  };
-  const db = await getDB(config);
-
-  const app = Fastify({ logger: false });
-
-  app.get("/", async (request, reply) => {
-    return { hello: "world" };
-  });
-
-  try {
-    await app.listen({ port: 3000 });
-  } catch (err) {
-    app.log.error(err);
-    process.exit(1);
-  }
-};
-
 const genSearchFn = (matchingLocationsSQL) => {
   const sql = `
   with matches as (
@@ -85,6 +57,7 @@ const searchLocationsByResidentCharacters = genSearchFn(
     where score is not null
   `
 );
+
 const searchLocationsByName = genSearchFn(
   `
       select
@@ -129,4 +102,9 @@ const getAllLocationsPlusResidents = (() => {
   };
 })();
 
-main();
+export default {
+  getAllLocationsPlusResidents,
+  searchLocationsByName,
+  searchLocationsByEpisodeName,
+  searchLocationsByResidentCharacters,
+};
