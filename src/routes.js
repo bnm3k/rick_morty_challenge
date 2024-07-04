@@ -5,6 +5,12 @@ const routes = async (app, options) => {
     return { foo: "bar" };
   });
 
+  app.get("/character/:characterID", async (request, reply) => {
+    const { characterID } = request.params;
+    const result = await handler.getCharacter(app.db, characterID);
+    return result;
+  });
+
   app.get("/location/:locationID", async (request, reply) => {
     const { locationID } = request.params;
     const result = await handler.getLocation(app.db, locationID);

@@ -124,6 +124,17 @@ const getLocation = async (db, locationID) => {
   return result;
 };
 
+const getCharacter = async (db, characterID) => {
+  const sql = `
+  select
+      id, name, status, image, notes
+  from character
+  where id = ?;
+    `;
+  const result = await db.all(sql, characterID);
+  return result;
+};
+
 export default {
   // get locations (id, name and type), plus residents (id, name, status)
   getAllLocationsPlusResidents,
@@ -135,6 +146,7 @@ export default {
   getLocation,
 
   // get resident (id, name, status, image, user note if any)
+  getCharacter,
 
   // insert/update resident note (need id & note)
 };

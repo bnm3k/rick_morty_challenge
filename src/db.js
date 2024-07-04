@@ -20,7 +20,8 @@ CREATE TABLE IF NOT EXISTS character(
   origin_location INTEGER,
   last_known_location INTEGER,
   image STRING,
-  created_at DATETIME
+  created_at DATETIME,
+  notes STRING -- probably move this to local storage (client side)
 );
 
 CREATE TABLE IF NOT EXISTS episode(
