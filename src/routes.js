@@ -7,14 +7,20 @@ const routes = async (app, options) => {
 
   app.get("/character/:characterID", async (request, reply) => {
     const { characterID } = request.params;
-    const result = await handler.getCharacter(app.db, characterID);
-    return result;
+    const [result] = await handler.getCharacter(app.db, characterID);
+    if (result) {
+      return result;
+    }
+    return null;
   });
 
   app.get("/location/:locationID", async (request, reply) => {
     const { locationID } = request.params;
-    const result = await handler.getLocation(app.db, locationID);
-    return result;
+    const [result] = await handler.getLocation(app.db, locationID);
+    if (result) {
+      return result;
+    }
+    return null;
   });
 
   app.get("/locations", async (request, reply) => {
