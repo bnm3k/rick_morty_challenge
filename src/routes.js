@@ -5,6 +5,12 @@ const routes = async (app, options) => {
     return { foo: "bar" };
   });
 
+  app.get("/location/:locationID", async (request, reply) => {
+    const { locationID } = request.params;
+    const result = await handler.getLocation(app.db, locationID);
+    return result;
+  });
+
   app.get("/locations", async (request, reply) => {
     // retrieves a list locations (name and type), plus residents of that
     // location and their status

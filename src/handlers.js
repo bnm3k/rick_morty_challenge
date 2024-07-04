@@ -102,9 +102,39 @@ const getAllLocationsPlusResidents = (() => {
   };
 })();
 
+const getLocation = async (db, locationID) => {
+  const sql = `
+  with residents as (
+      select
+          l.id as location_id,
+          list(
+            {'id': c.id, 'name': c.name, 'status': c.status, 'image': c.image}
+          ) as residents
+      from location l
+      join character c on l.id = c.last_known_location
+      where l.id = ?
+      group by l.id
+  )
+  select
+      l.id, l.name, l.type, r.residents,
+  from location l
+  join residents r on l.id = r.location_id
+    `;
+  const result = await db.all(sql, locationID);
+  return result;
+};
+
 export default {
+  // get locations (id, name and type), plus residents (id, name, status)
   getAllLocationsPlusResidents,
   searchLocationsByName,
   searchLocationsByEpisodeName,
   searchLocationsByResidentCharacters,
+
+  // get location (id, name and type) plus residents (id, name, status, image)
+  getLocation,
+
+  // get resident (id, name, status, image, user note if any)
+
+  // insert/update resident note (need id & note)
 };
