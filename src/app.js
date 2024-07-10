@@ -2,16 +2,15 @@ import Fastify from "fastify";
 
 import { getDB } from "./db.js";
 import routes from "./routes.js";
+import { defaultConfig, withDevOptions } from "./config.js";
 
 const main = async () => {
   // config
-  const config = {
-    skipDBChecks: true, // before skipping, check that file is present
-    dbPath: "app.db",
-    port: 3000,
-    host: "localhost",
-    logger: false,
-  };
+  const dev = true; // TODO, set option from CLI
+  let config = defaultConfig;
+  if (dev) {
+    config = withDevOptions(config);
+  }
 
   const db = await getDB(config);
 
