@@ -3,6 +3,8 @@ import Fastify from "fastify";
 import { getDB } from "./db.js";
 import routes from "./routes.js";
 import { getConfig } from "./config.js";
+import { setupAPIDocs } from "./docs.js";
+import fastify from "fastify";
 
 const main = async () => {
   // config
@@ -14,7 +16,12 @@ const main = async () => {
   app.decorate("db", db);
   app.decorate("config", config);
 
+  await setupAPIDocs(app);
+
   app.register(routes);
+
+  await app.ready();
+  app.swagger();
 
   const { port, host } = config;
   app.listen({ port, host }, (err, address) => {

@@ -29,7 +29,7 @@ export function applyDevConfig(config) {
 
   // skip DB checks on startup while in dev mode, assume the DB is already
   // populated and configured
-  devConfig.skipDBChecks = true;
+  devConfig.skipDbChecks = true;
 
   return devConfig;
 }
