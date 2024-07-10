@@ -4,7 +4,7 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon src/app.js"
+    "dev": "nodemon src/app.js --dev"
   },
   "author": "",
   "license": "ISC",
@@ -17,6 +17,7 @@
     "pino-pretty": "^11.2.1"
   },
   "dependencies": {
+    "commander": "^12.1.0",
     "duckdb-async": "^1.0.0",
     "fastify": "^4.28.1",
     "ky": "^1.4.0"

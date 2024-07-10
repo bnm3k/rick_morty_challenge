@@ -2,15 +2,11 @@ import Fastify from "fastify";
 
 import { getDB } from "./db.js";
 import routes from "./routes.js";
-import { defaultConfig, withDevOptions } from "./config.js";
+import { getConfig } from "./config.js";
 
 const main = async () => {
   // config
-  const dev = true; // TODO, set option from CLI
-  let config = defaultConfig;
-  if (dev) {
-    config = withDevOptions(config);
-  }
+  let config = getConfig();
 
   const db = await getDB(config);
 
@@ -26,6 +22,7 @@ const main = async () => {
       app.log.error(err);
       process.exit(1);
     }
+    app.log.debug(`Dev mode: ${config.dev}`);
   });
 };
 
