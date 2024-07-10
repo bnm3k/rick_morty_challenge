@@ -158,11 +158,11 @@ const doInsert = async (db, endpoint, insertChunk) => {
   }
 };
 
-export const getDB = async ({ dbPath, skipDBChecks }) => {
+export const getDB = async ({ dbPath, skipDbChecks }) => {
   // setup create db instance
   const db = await Database.create(dbPath);
 
-  if (skipDBChecks) {
+  if (skipDbChecks) {
     return db;
   }
   const conn = await db.connect();
