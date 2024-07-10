@@ -1,4 +1,5 @@
 import { program } from "commander";
+import version from "./version.js";
 
 // default config
 export const defaultConfig = {
@@ -36,6 +37,7 @@ export function applyDevConfig(config) {
 
 export function applyCLIConfig(config) {
   program
+    .version(version)
     .option("--dev", "Sets dev mode to true, NOT for live production")
     .option("-p, --port <port>", "Port for server address")
     .option("-h, --host <host>", "Host for server address")
