@@ -21,7 +21,6 @@ const main = async () => {
   app.register(routes);
 
   await app.ready();
-  app.swagger();
 
   const { port, host } = config;
   app.listen({ port, host }, (err, address) => {

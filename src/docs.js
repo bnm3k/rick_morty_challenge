@@ -1,36 +1,40 @@
 import swagger from "@fastify/swagger";
+import docsUI from "@scalar/fastify-api-reference";
+
+import version from "./version.js";
 
 export async function setupAPIDocs(app) {
+  const { host, port } = app.config;
+  const address = `http://${host}:${port}`;
+  const title = "Rick & Morty API Reference";
   await app.register(swagger, {
     openapi: {
       openapi: "3.0.0",
       info: {
-        title: "Test swagger",
-        description: "Testing the Fastify swagger API",
-        version: "0.1.0",
+        title: title,
+        description:
+          "API for searching locations in the Rick and Morty show and adding notes",
+        version: version,
       },
       servers: [
         {
-          url: "http://localhost:3000",
-          description: "Development server",
+          url: address,
+          description: "API server",
         },
-      ],
-      tags: [
-        { name: "user", description: "User related end-points" },
-        { name: "code", description: "Code related end-points" },
       ],
       components: {
-        securitySchemes: {
-          apiKey: {
-            type: "apiKey",
-            name: "apiKey",
-            in: "header",
-          },
-        },
+        securitySchemes: null, // no security
       },
-      externalDocs: {
-        url: "https://swagger.io",
-        description: "Find more info here",
+    },
+  });
+
+  await app.register(docsUI, {
+    routePrefix: "/docs",
+    configuration: {
+      hideDownloadButton: false,
+      searchHotKey: "/",
+      metaData: {
+        title: title,
       },
     },
   });
