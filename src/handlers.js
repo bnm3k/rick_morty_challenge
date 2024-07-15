@@ -111,7 +111,7 @@ const getLocation = async (db, locationID) => {
             {'id': c.id, 'name': c.name, 'status': c.status, 'image': c.image}
           ) as residents
       from location l
-      join character c on l.id = c.last_known_location
+      join c on l.id = c.last_known_location
       where l.id = ?
       group by l.id
   )
@@ -121,15 +121,16 @@ const getLocation = async (db, locationID) => {
   join residents r on l.id = r.location_id
     `;
   const result = await db.all(sql, locationID);
+  console.log(JSON.stringify(result));
   return result;
 };
 
 const getCharacter = async (db, characterID) => {
   const sql = `
   select
-      id, name, status, image, notes
+      id, name, status, image, coalesce(notes, '') as notes,
   from character c
-  join character_notes cn on c.id = cn.character_id
+  left join character_notes cn on c.id = cn.character_id
   where id = ?;`;
   const result = await db.all(sql, characterID);
   return result;
