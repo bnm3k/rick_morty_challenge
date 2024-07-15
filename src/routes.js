@@ -1,4 +1,4 @@
-import handler from "./handlers.js";
+import handle from "./controllers.js";
 
 const routes = async (app, options) => {
   app.route({
@@ -57,7 +57,7 @@ const routes = async (app, options) => {
     },
     handler: async (request, reply) => {
       const { characterID } = request.params;
-      const [result] = await handler.getCharacter(app.db, characterID);
+      const [result] = await handle.getCharacter(app.db, characterID);
       console.log(result);
       if (result) {
         return result;
@@ -104,7 +104,7 @@ const routes = async (app, options) => {
       });
       if (validate(request.body) === true) {
         const { id, notes } = request.body;
-        await handler.insertNotesOnCharacter(app.db, id, notes);
+        await handle.insertNotesOnCharacter(app.db, id, notes);
         reply.code(204).send();
       } else {
         return validate.errors;
@@ -181,7 +181,7 @@ const routes = async (app, options) => {
     },
     handler: async (request, reply) => {
       const { locationID } = request.params;
-      const [result] = await handler.getLocation(app.db, locationID);
+      const [result] = await handle.getLocation(app.db, locationID);
       if (result) {
         return result;
       }
@@ -283,16 +283,16 @@ locations are returned
       const { name, character, episode } = request.query;
       let result;
       if (name) {
-        result = await handler.searchLocationsByName(app.db, name);
+        result = await handle.searchLocationsByName(app.db, name);
       } else if (character) {
-        result = await handler.searchLocationsByResidentCharacters(
+        result = await handle.searchLocationsByResidentCharacters(
           app.db,
           character
         );
       } else if (episode) {
-        result = await handler.searchLocationsByEpisodeName(app.db, episode);
+        result = await handle.searchLocationsByEpisodeName(app.db, episode);
       } else {
-        result = await handler.getAllLocationsPlusResidents(app.db);
+        result = await handle.getAllLocationsPlusResidents(app.db);
       }
       return result;
     },
