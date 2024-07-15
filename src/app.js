@@ -4,7 +4,6 @@ import { getDB } from "./db.js";
 import routes from "./routes.js";
 import { getConfig } from "./config.js";
 import { setupAPIDocs } from "./docs.js";
-import fastify from "fastify";
 
 const main = async () => {
   // config
