@@ -1,5 +1,8 @@
+import fs from "fs";
+
 import ky from "ky";
 import { Database } from "duckdb-async";
+import pino from "pino";
 
 const schemaSQL = `
 CREATE TABLE IF NOT EXISTS location (
@@ -43,7 +46,7 @@ CREATE TABLE IF NOT EXISTS episode_to_character(
 );
 `;
 
-const insertLocations = async (db) => {
+const insertLocations = async (db, logger) => {
   // Insert chunk/page of location
   // We do not expect the location metadata to change as new episodes are
   // released, therefore we 'ignore' if we already have the data for a given
@@ -63,10 +66,10 @@ const insertLocations = async (db) => {
 
   let endpoint = "https://rickandmortyapi.com/api/location";
   await doInsert(db, endpoint, insertChunk);
-  console.log("Complete load of locations");
+  logger.info("Complete load of locations from API into DB");
 };
 
-const insertEpisodes = async (db) => {
+const insertEpisodes = async (db, logger) => {
   // Insert chunk/page of episodes
   // We do not expect the episode data for previous episodes to change as new
   // episodes are released, therefore we 'ignore' if we already have the data
@@ -100,10 +103,10 @@ const insertEpisodes = async (db) => {
   };
   let endpoint = "https://rickandmortyapi.com/api/episode";
   await doInsert(db, endpoint, insertChunk);
-  console.log("Complete load of episodes");
+  logger.info("Complete load of episodes from API into DB");
 };
 
-const insertCharacters = async (db) => {
+const insertCharacters = async (db, logger) => {
   // insert characters
   // As new episodes are released, we expect that certain details about
   // characters will change. Therefore we do an entire replace. For efficiency,
@@ -146,7 +149,7 @@ const insertCharacters = async (db) => {
 
   let endpoint = "https://rickandmortyapi.com/api/character";
   await doInsert(db, endpoint, insertChunk);
-  console.log("Complete load of characters");
+  logger.info("Complete load of characters into DB");
 };
 
 const doInsert = async (db, endpoint, insertChunk) => {
@@ -158,17 +161,23 @@ const doInsert = async (db, endpoint, insertChunk) => {
   }
 };
 
-export const getDB = async ({ dbPath, skipDbChecks }) => {
+export const getDB = async ({ dbPath, skipDbChecks, logger }) => {
+  if (!logger) {
+    logger = pino(fs.createWriteStream("/dev/null"));
+  }
   // setup create db instance
   const db = await Database.create(dbPath);
+  logger.info("Create DB instance");
 
   if (skipDbChecks) {
+    logger.info("Skip DB checks");
     return db;
   }
   const conn = await db.connect();
 
   // set up schema
   await conn.run(schemaSQL);
+  logger.info("Setup DB schema");
 
   // get number of episodes
   const [{ count }] = await conn.all(
@@ -181,28 +190,28 @@ export const getDB = async ({ dbPath, skipDbChecks }) => {
       .get("https://rickandmortyapi.com/api/episode")
       .json();
     expectedCount = info.count; // up to date count
-    console.log(
+    logger.info(
       `Retrieve expected count of episodes from API: ${expectedCount}`
     );
   } catch (_) {
-    console.log("Use stale count of episodes to check if data up to date");
+    logger.info("Use stale count of episodes to check if data up to date");
   }
 
   if (count === expectedCount) {
-    console.log("Data is up to date");
+    logger.info("Data in DB is up to date");
     conn.close();
     return db;
   } else {
-    console.log(
+    logger.info(
       `Expect count of ${expectedCount} episodes, got ${count} in DB`
     );
   }
-  console.log("Retrieve latest data from Rick and Morty API");
+  logger.info("Retrieve latest data from Rick and Morty API");
 
   // insert data
-  let l = insertLocations(db);
-  let e = insertEpisodes(db);
-  let c = insertCharacters(db);
+  let l = insertLocations(db, logger);
+  let e = insertEpisodes(db, logger);
+  let c = insertCharacters(db, logger);
 
   await e;
   await l;
@@ -215,6 +224,7 @@ export const getDB = async ({ dbPath, skipDbChecks }) => {
   PRAGMA create_fts_index(character, id, name, overwrite=true);
   PRAGMA create_fts_index(episode, id, name, overwrite=true);
   `);
+  logger.info("Create Full-text search indexes");
 
   return db;
 };

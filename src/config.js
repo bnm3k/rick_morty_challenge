@@ -1,3 +1,6 @@
+import fs from "fs";
+
+import pino from "pino";
 import { program } from "commander";
 import version from "./version.js";
 
@@ -43,7 +46,7 @@ export function applyCLIConfig(config) {
     .option("-h, --host <host>", "Host for server address")
     .option("--db-path <path>", "Path to db file")
     .option("--skip-db-checks", "Skip check for updates on Rick & Morty API")
-    .option("--quiet", "Quiet mode: disable all logging")
+    .option("--quiet", "Quiet mode: disable all logging", false)
     .parse(process.argv);
   const cli = program.opts();
   let newConfig = Object.assign({}, config);
@@ -58,9 +61,13 @@ export function applyCLIConfig(config) {
     }
   }
 
+  // if logger hasn't been set to pretty print (for dev mode), we set a boolean
+  // value and fastify will handle initializing either the null logger (if false)
+  // or the prod logger (if true). By defaullt, is true
   if (cli.quiet) {
-    newConfig.logger = null;
+    newConfig.logger = false;
   }
+
   return newConfig;
 }
 
