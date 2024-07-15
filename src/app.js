@@ -9,9 +9,9 @@ const main = async () => {
   // config
   let config = getConfig();
 
-  const db = await getDB(config);
-
   const app = Fastify({ logger: config.logger });
+  const { dbPath, skipDbChecks } = config;
+  const db = await getDB({ dbPath, skipDbChecks, log: app.log });
   app.decorate("db", db);
   app.decorate("config", config);
 

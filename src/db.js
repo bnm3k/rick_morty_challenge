@@ -161,23 +161,23 @@ const doInsert = async (db, endpoint, insertChunk) => {
   }
 };
 
-export const getDB = async ({ dbPath, skipDbChecks, logger }) => {
-  if (!logger) {
-    logger = pino(fs.createWriteStream("/dev/null"));
+export const getDB = async ({ dbPath, skipDbChecks, logger: log }) => {
+  if (!log) {
+    log = pino(fs.createWriteStream("/dev/null"));
   }
   // setup create db instance
   const db = await Database.create(dbPath);
-  logger.info("Create DB instance");
+  log.info("Create DB instance");
 
   if (skipDbChecks) {
-    logger.info("Skip DB checks");
+    log.info("Skip DB checks");
     return db;
   }
   const conn = await db.connect();
 
   // set up schema
   await conn.run(schemaSQL);
-  logger.info("Setup DB schema");
+  log.info("Setup DB schema");
 
   // get number of episodes
   const [{ count }] = await conn.all(
@@ -190,28 +190,24 @@ export const getDB = async ({ dbPath, skipDbChecks, logger }) => {
       .get("https://rickandmortyapi.com/api/episode")
       .json();
     expectedCount = info.count; // up to date count
-    logger.info(
-      `Retrieve expected count of episodes from API: ${expectedCount}`
-    );
+    log.info(`Retrieve expected count of episodes from API: ${expectedCount}`);
   } catch (_) {
-    logger.info("Use stale count of episodes to check if data up to date");
+    log.info("Use stale count of episodes to check if data up to date");
   }
 
   if (count === expectedCount) {
-    logger.info("Data in DB is up to date");
+    log.info("Data in DB is up to date");
     conn.close();
     return db;
   } else {
-    logger.info(
-      `Expect count of ${expectedCount} episodes, got ${count} in DB`
-    );
+    log.info(`Expect count of ${expectedCount} episodes, got ${count} in DB`);
   }
-  logger.info("Retrieve latest data from Rick and Morty API");
+  log.info("Retrieve latest data from Rick and Morty API");
 
   // insert data
-  let l = insertLocations(db, logger);
-  let e = insertEpisodes(db, logger);
-  let c = insertCharacters(db, logger);
+  let l = insertLocations(db, log);
+  let e = insertEpisodes(db, log);
+  let c = insertCharacters(db, log);
 
   await e;
   await l;
@@ -224,7 +220,7 @@ export const getDB = async ({ dbPath, skipDbChecks, logger }) => {
   PRAGMA create_fts_index(character, id, name, overwrite=true);
   PRAGMA create_fts_index(episode, id, name, overwrite=true);
   `);
-  logger.info("Create Full-text search indexes");
+  log.info("Create Full-text search indexes");
 
   return db;
 };
