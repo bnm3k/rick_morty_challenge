@@ -54,10 +54,17 @@ fails, the app still proceeds but the data might be potentially stale.
 
 - `src/app.js`: contains code for starting up and running the server. It is also
   where the configuration is.
-- `src/routes.js`: holds the REST API endpoints
+- `src/config.js`: holds the default configuration, dev config and setting up
+  and parsing of config passed via CLI arguments.
+- `src/controllers.js`: holds code for accessing and querying the data
 - `src/db.js`: holds the schema for the database, plus code for initializing the
   DB by retrieving data from the Rick & Morty API and inserting it.
-- `src/handlers.js`: holds code for accessing and querying the data
+- `src/docs.js`: holds setup code for the API documentations (which uses
+  [swagger](https://swagger.io/))
+- `src/routes.js`: holds the REST API endpoints
+- `src/version.js`: retrieves version from package.json
+- `scripts/init-db.js`: script for setting up the database and seeding it with
+  data from the Rick & Morty API.
 
 ## Deployment
 
@@ -67,16 +74,36 @@ Get the dependencies
 npm install
 ```
 
-To configure, modify the `config` object in `src/app.js`. The defaults are:
+To configure the defaults, modify the `defaultConfig` object in `src/config.js`.
+The defaults are:
 
 ```javascript
 {
-  skipDBChecks: true,
+  skipDbChecks: false, // before skipping, check that file is present
   dbPath: "app.db",
   port: 3000,
   host: "localhost",
-  logger: false,
+  logger: true,
+  dev: false,
 };
+```
+
+However, for runtime, it is recommended that the configurations are set via CLI
+arguments:
+
+```bash=
+> node src/app.js --help
+Usage: app [options]
+
+Options:
+  -V, --version      output the version number
+  --dev              Sets dev mode to true, NOT for live production
+  -p, --port <port>  Port for server address
+  -h, --host <host>  Host for server address
+  --db-path <path>   Path to db file
+  --skip-db-checks   Skip check for updates on Rick & Morty API
+  --quiet            Quiet mode: disable all logging (default: false)
+  --help             display help for command
 ```
 
 To run **locally**:
@@ -85,6 +112,50 @@ To run **locally**:
 node src/app.js
 ```
 
+The DB will be automatically seeded and refreshed on startup (unless you pass
+the `--skip-db-checks` flag). However, if you want to init and seed the db
+separately, run the following at the project root:
+
+```bash
+npm run init-db
+```
+
+or:
+
+```bash
+node scripts/init-db.js
+```
+
+### Docker
+
+The service can also be run within a docker container.
+
+To build the image (at the project root):
+
+```bash
+docker build -t rick_morty_api .
+```
+
+To run:
+
+```bash
+docker container run --rm -p 3000:3000 \
+  --name rick_morty rick_morty_api:latest
+```
+
+The debian node image is used rather than alpine since getting DuckDB to work
+with musl proved challenging - that is, the duckdb package as installed from NPM
+rather than built from source.
+
+While the API docs endpoint is accessible from a containerized instance, there
+is a configuration bug somewhere that prevents sending requests to and fro to
+test the API. For such usage, it is recommended that the service is run directly
+at the host rather than within the docker container.
+
 ## Tests
 
 TODO
+
+## License
+
+MIT
