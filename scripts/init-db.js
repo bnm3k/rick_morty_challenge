@@ -2,6 +2,7 @@ import fs from "fs";
 
 import { program } from "commander";
 import pino from "pino";
+import pretty from "pino-pretty";
 
 import version from "../src/version.js";
 import { getDB } from "../src/db.js";
@@ -21,23 +22,17 @@ const main = async () => {
   const { dbPath, quiet } = parseCLIArgs();
 
   // set up logging
-  let log;
-  const logLevel = "debug";
+  let stream = undefined;
   if (quiet === true) {
-    const stream = fs.createWriteStream("/dev/null");
-    log = pino(stream);
+    stream = fs.createWriteStream("/dev/null");
   } else {
-    log = pino({
-      level: logLevel,
-      transport: {
-        target: "pino-pretty",
-        options: {
-          colorize: true,
-          minimumLevel: logLevel,
-        },
-      },
+    stream = pretty({
+      colorize: true,
+      ignore: "hostname,pid",
     });
   }
+  const logLevel = "debug";
+  const log = pino({ level: logLevel }, stream);
 
   if (!dbPath) {
     log.fatal("DB path empty. Provide db path via `--db-path` cli arg");
