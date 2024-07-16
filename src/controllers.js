@@ -121,7 +121,6 @@ const getLocation = async (db, locationID) => {
   join residents r on l.id = r.location_id
     `;
   const result = await db.all(sql, locationID);
-  console.log(JSON.stringify(result));
   return result;
 };
 

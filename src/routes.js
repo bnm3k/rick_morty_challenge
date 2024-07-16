@@ -58,7 +58,6 @@ const routes = async (app, options) => {
     handler: async (request, reply) => {
       const { characterID } = request.params;
       const [result] = await handle.getCharacter(app.db, characterID);
-      console.log(result);
       if (result) {
         return result;
       }
