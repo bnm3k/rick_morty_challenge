@@ -1,21 +1,14 @@
 import Image from "next/image";
-import styles from "./page.module.css";
 
-export default function Character() {
-  const data = {
-    id: 1,
-    name: "Rick Sanchez",
-    status: "Alive",
-    image: "https://rickandmortyapi.com/api/character/avatar/1.jpeg",
-  };
-  const { id, name, status, image } = data;
+export default function Character({ id, name, status, image }) {
+  const size = 190;
   return (
     <a href="google.com">
       <div className="column">
         <Image
           src={image}
-          width={500}
-          height={500}
+          width={size}
+          height={size}
           alt={`Picture of the character ${name} from the show Rick & Morty`}
         />
         <p>

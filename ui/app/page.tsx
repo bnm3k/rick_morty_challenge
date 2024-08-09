@@ -1,5 +1,4 @@
 import Image from "next/image";
-import styles from "./page.module.css";
 import Character from "@/app/character";
 
 function Header() {
@@ -35,7 +34,7 @@ function Row() {
 
 export default function Home() {
   return (
-    <main className={styles.main}>
+    <main>
       <Header />
       <hr />
       <hr />
