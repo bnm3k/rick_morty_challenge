@@ -182,9 +182,11 @@ const routes = async (app, options) => {
       const { locationID } = request.params;
       const [result] = await handle.getLocation(app.db, locationID);
       if (result) {
+        console.log("NO WAY");
         return result;
       }
-      return null;
+      console.log("BOZO alert");
+      reply.code(404).send();
     },
   });
 
