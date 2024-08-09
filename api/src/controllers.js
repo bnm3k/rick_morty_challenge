@@ -111,7 +111,7 @@ const getLocation = async (db, locationID) => {
             {'id': c.id, 'name': c.name, 'status': c.status, 'image': c.image}
           ) as residents
       from location l
-      join c on l.id = c.last_known_location
+      join character c on l.id = c.last_known_location
       where l.id = ?
       group by l.id
   )
