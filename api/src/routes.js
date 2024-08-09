@@ -45,11 +45,44 @@ const routes = async (app, options) => {
               example:
                 "https://rickandmortyapi.com/api/character/avatar/1.jpeg",
             },
-            notes: {
+            species: {
+              type: ["string", "null"],
+              description: "Species of the character",
+              example: "Human",
+            },
+            type: {
+              type: ["string", "null"],
+              description: "Type of character",
+              example: null,
+            },
+            gender: {
               type: "string",
+              description: "Gender of the character",
+              example: "Male",
+            },
+            origin_location_id: {
+              type: ["number", "null"],
               description:
-                "Additional notes about the character added by a user",
-              example: "Rick Sanchez is from dimension C-137",
+                "ID for the original location where character came from",
+              example: 1,
+            },
+            origin_location_name: {
+              type: ["string", "null"],
+              description:
+                "Name of the original location where character came from",
+              example: "Earth (C-137)",
+            },
+            last_known_location_id: {
+              type: ["number", "null"],
+              description:
+                "ID for location where character is currently residing",
+              example: 3,
+            },
+            last_known_location_name: {
+              type: ["string", "null"],
+              description:
+                "Name of the location where character is currently residing",
+              example: "Citadel of Ricks",
             },
           },
         },
@@ -61,7 +94,7 @@ const routes = async (app, options) => {
       if (result) {
         return result;
       }
-      return null;
+      reply.code(404).send();
     },
   });
 

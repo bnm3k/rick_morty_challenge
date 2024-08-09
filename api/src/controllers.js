@@ -102,9 +102,15 @@ const getLocation = async (db, locationID) => {
 const getCharacter = async (db, characterID) => {
   const sql = `
   select
-      id, name, status, image, coalesce(notes, '') as notes,
+      id, name, status, image, species, type, gender,
+
+      last_known_location as last_known_location_id,
+      (select name from location where id = last_known_location)
+        as last_known_location_name,
+
+      origin_location as origin_location_id,
+      (select name from location where id = origin_location) as origin_location_name,
   from character c
-  left join character_notes cn on c.id = cn.character_id
   where id = ?;`;
   const result = await db.all(sql, characterID);
   return result;
