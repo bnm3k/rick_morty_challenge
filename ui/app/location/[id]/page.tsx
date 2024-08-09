@@ -1,5 +1,5 @@
 import Image from "next/image";
-import testData from "./test_data";
+import { notFound } from "next/navigation";
 
 function Character({ id, name, status, image }) {
   const size = 190;
@@ -48,11 +48,12 @@ function Residents({ residents }) {
   for (let i = 0; i < residents.length; i += maxPerRow) {
     rows.push(residents.slice(i, i + maxPerRow));
   }
+  const deriveKey = (cs) => cs.map((c) => c.id).join("");
   return (
     <section>
       <h2>Residents:</h2>
       {rows.map((cs) => {
-        return <Row characters={cs} />;
+        return <Row key={deriveKey(cs)} characters={cs} />;
       })}
     </section>
   );
@@ -67,12 +68,16 @@ function Header({ name, locationType }) {
   );
 }
 
-export default async function Page() {
-  const locationID = 20;
-  const data = await fetch(`http://localhost:3001/location/${locationID}`).then(
-    (res) => res.json()
-  );
-  const { id, name, type, residents } = data;
+export default async function Page({ params }: { params: { id: Number } }) {
+  const { id } = params;
+  let data;
+  try {
+    const res = await fetch(`http://localhost:3001/location/${id}`);
+    data = await res.json();
+  } catch (err) {
+    notFound();
+  }
+  const { name, type, residents } = data;
 
   return (
     <main>
