@@ -1,5 +1,6 @@
-import Image from "next/image";
-import Character from "@/app/character";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import SearchResults from "@/app/search_results";
 
 function Header() {
   return (
@@ -20,34 +21,22 @@ function Header() {
   );
 }
 
-function Row() {
-  return (
-    <>
-      <div className="row">
-        <Character />
-        <Character />
-        <Character />
-      </div>
-    </>
-  );
-}
+export default async function Page() {
+  let locations;
+  try {
+    const res = await fetch(`http://localhost:3001/locations`, {
+      cache: "no-cache",
+    });
+    locations = await res.json();
+  } catch (err) {
+    notFound();
+  }
 
-export default function Home() {
   return (
     <main>
       <Header />
       <hr />
-      <hr />
-      <section>
-        <h2>Locations</h2>
-        <Row />
-        <br />
-        <br />
-        <Row />
-        <br />
-        <br />
-        <Row />
-      </section>
+      <SearchResults locations={locations} />
     </main>
   );
 }
