@@ -8,7 +8,7 @@ import version from "./version.js";
 export const defaultConfig = {
   skipDbChecks: false, // before skipping, check that file is present
   dbPath: "app.db",
-  port: 3000,
+  port: 3001,
   host: "localhost",
   logger: true,
   dev: false,
