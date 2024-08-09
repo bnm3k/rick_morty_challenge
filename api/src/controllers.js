@@ -2,24 +2,12 @@ const genSearchFn = (matchingLocationsSQL) => {
   const sql = `
   with matches as (
     ${matchingLocationsSQL}
-  ), residents as (
-      select
-          l.id as location_id,
-          list(
-            {'id': c.id, 'name': c.name, 'status': c.status}
-          ) as residents
-      from matches l
-      join character c on l.id = c.last_known_location
-      group by l.id
   )
   select
       l.id as location_id,
       l.name as location_name,
       l.type as location_type,
-      case when len(r.residents) >= 1 then r.residents
-      else [] end as residents
   from matches l
-  left join residents r on l.id = r.location_id
   order by l.score desc`;
 
   return async (db, searchTerm) => {
@@ -77,24 +65,11 @@ const getAllLocationsPlusResidents = (() => {
   return async (db) => {
     if (result === null) {
       const sql = `
-      with residents as (
-          select
-              l.id as location_id,
-              list(
-                {'id': c.id, 'name': c.name, 'status': c.status}
-              ) as residents
-          from location l
-          join character c on l.id = c.last_known_location
-          group by l.id
-      )
       select
           l.id as location_id,
           l.name as location_name,
-          l.type as location_type,
-          case when len(r.residents) >= 1 then r.residents
-          else [] end as residents
+          l.type as location_type
       from location l
-      left join residents r on l.id = r.location_id
     `;
       result = await db.all(sql);
     }

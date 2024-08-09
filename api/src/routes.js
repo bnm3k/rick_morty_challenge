@@ -182,10 +182,8 @@ const routes = async (app, options) => {
       const { locationID } = request.params;
       const [result] = await handle.getLocation(app.db, locationID);
       if (result) {
-        console.log("NO WAY");
         return result;
       }
-      console.log("BOZO alert");
       reply.code(404).send();
     },
   });
@@ -196,9 +194,8 @@ const routes = async (app, options) => {
     schema: {
       summary: "List/Search all locations",
       description: `
-Retrieves a list locations (name and type), plus residents of that
-location and their status. Optionally, one can pass a query parameter to search
-and filter locations by name, episode or character.
+Retrieves a list locations (name and type). Optionally, one can pass a query
+parameter to search and filter locations by name, episode or character.
 
 - To search by location name, use the query parameter \`name\`
 - To search by episode name, use the query parameter \`episode\`
@@ -247,30 +244,6 @@ locations are returned
                       type: "string",
                       description: "Type of the location",
                       example: "Planet",
-                    },
-                    residents: {
-                      type: "array",
-                      description: "List of residents in the location",
-                      items: {
-                        type: "object",
-                        properties: {
-                          id: {
-                            type: "integer",
-                            description: "Unique identifier for the resident",
-                            example: 38,
-                          },
-                          name: {
-                            type: "string",
-                            description: "Name of the resident",
-                            example: "Beth Smith",
-                          },
-                          status: {
-                            type: "string",
-                            description: "Current status of the resident",
-                            example: "Alive",
-                          },
-                        },
-                      },
                     },
                   },
                 },
