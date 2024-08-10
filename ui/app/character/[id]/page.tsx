@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Nav from "@/app/nav";
+import { rickMortyEndpoint } from "@/app/common";
+import Notes from "./notes";
 
 function Header({ name }: { name: string }) {
   return (
@@ -55,7 +57,7 @@ export default async function Page({ params }: { params: { id: Number } }) {
   const { id } = params;
   let data;
   try {
-    const res = await fetch(`http://localhost:3001/character/${id}`, {
+    const res = await fetch(`${rickMortyEndpoint}/character/${id}`, {
       cache: "no-cache",
     });
     data = await res.json();
@@ -76,6 +78,7 @@ export default async function Page({ params }: { params: { id: Number } }) {
           <CharacterInfo info={data} />
         </div>
       </section>
+      <Notes />
     </main>
   );
 }
