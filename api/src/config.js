@@ -6,7 +6,7 @@ import version from "./version.js";
 
 // default config
 export const defaultConfig = {
-  skipDbChecks: false, // before skipping, check that file is present
+  skipDbChecks: true, // before skipping, check that file is present
   dbPath: "app.db",
   port: 3001,
   host: "localhost",

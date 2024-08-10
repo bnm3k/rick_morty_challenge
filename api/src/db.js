@@ -112,8 +112,8 @@ const insertCharacters = async (db, logger) => {
     let stmt = await conn.prepare(
       `INSERT OR REPLACE INTO character
     BY POSITION (id, name, status, species, type, gender, origin_location,
-      last_known_location, image, created_at)
-    VALUES (?,?,?,?,?,?,?,?,?,?)`
+      last_known_location, created_at)
+    VALUES (?,?,?,?,?,?,?,?,?)`
     );
     for (let c of characters) {
       let origin_location = null;
@@ -134,7 +134,6 @@ const insertCharacters = async (db, logger) => {
         c.gender,
         origin_location,
         last_known_location,
-        c.image,
         c.created
       );
     }

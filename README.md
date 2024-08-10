@@ -81,7 +81,7 @@ The defaults are:
 {
   skipDbChecks: false, // before skipping, check that file is present
   dbPath: "app.db",
-  port: 3000,
+  port: 3001,
   host: "localhost",
   logger: true,
   dev: false,
@@ -139,7 +139,7 @@ docker build -t rick_morty_api .
 To run:
 
 ```bash
-docker container run --rm -p 3000:3000 \
+docker container run --rm -p 3001:3001 \
   --name rick_morty rick_morty_api:latest
 ```
 

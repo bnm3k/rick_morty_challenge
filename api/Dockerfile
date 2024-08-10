@@ -23,14 +23,8 @@ USER node
 # # Copy the rest of the source files into the image.
 COPY --chown=node:node . .
 
-
-# # # Setup db
-ARG DB=app.db
-RUN npm run init-db -- --db-path ${DB}
-
-
 # # Expose the port that the application listens on by default
-EXPOSE 3000
+EXPOSE 3001
 
 # # Run the application.
 CMD ["/usr/local/bin/node", "src/app.js", "--db-path", "${DB}", "--host", "0.0.0.0"]
