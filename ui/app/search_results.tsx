@@ -88,7 +88,7 @@ function SearchBox({ setResults, allLocations }) {
   );
 }
 
-export default function Results({ locations: allLocations }) {
+export default function SearchResults({ locations: allLocations }) {
   const [results, setResults] = useState({
     resultType: "all",
     locations: allLocations,
