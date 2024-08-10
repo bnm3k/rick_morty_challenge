@@ -78,7 +78,7 @@ export default async function Page({ params }: { params: { id: Number } }) {
           <CharacterInfo info={data} />
         </div>
       </section>
-      <Notes />
+      <Notes characterID={id} />
     </main>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 const notes =
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
@@ -43,10 +43,24 @@ function AddNote({ handleSaveNote, content }) {
   );
 }
 
-export default function Notes() {
+export default function Notes({ characterID }) {
   "use client";
   const [content, setContent] = useState(null);
   const [edit, setEdit] = useState(false);
+
+  useEffect(() => {
+    const savedValue = window.localStorage.getItem(characterID);
+    if (savedValue) {
+      setContent(savedValue);
+    }
+  }, [characterID]);
+
+  useEffect(() => {
+    if (content !== null) {
+      window.localStorage.setItem(characterID, content);
+    }
+  }, [characterID, content]);
+
   function onSaveNote(newNote: string) {
     setEdit(false);
     setContent(newNote);
