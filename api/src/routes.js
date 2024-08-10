@@ -99,52 +99,6 @@ const routes = async (app, options) => {
   });
 
   app.route({
-    url: "/character/:characterID/note",
-    method: ["POST"],
-    schema: {
-      summary: "Add note for character",
-      description: "",
-      body: {
-        type: "object",
-        required: ["id", "notes"],
-        properties: {
-          id: {
-            type: "integer",
-            description: "Unique identifier for the character",
-          },
-          notes: {
-            type: "string",
-            description: "User provided notes on the character",
-          },
-        },
-      },
-      response: {
-        204: {
-          description: "Notes has been persisted successfully",
-          type: "null",
-        },
-      },
-    },
-    handler: async (request, reply) => {
-      const validate = request.compileValidationSchema({
-        type: "object",
-        required: ["id", "notes"],
-        properties: {
-          id: { type: "integer" },
-          notes: { type: "string" },
-        },
-      });
-      if (validate(request.body) === true) {
-        const { id, notes } = request.body;
-        await handle.insertNotesOnCharacter(app.db, id, notes);
-        reply.code(204).send();
-      } else {
-        return validate.errors;
-      }
-    },
-  });
-
-  app.route({
     url: "/location/:locationID",
     method: ["GET"],
     schema: {

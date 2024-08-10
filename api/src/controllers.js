@@ -116,12 +116,6 @@ const getCharacter = async (db, characterID) => {
   return result;
 };
 
-const insertNotesOnCharacter = async (db, characterID, notes) => {
-  const sql = `insert into character_notes values (?, ?)
-               on conflict do update set notes = excluded.notes;`;
-  await db.run(sql, characterID, notes);
-};
-
 export default {
   // get locations (id, name and type), plus residents (id, name, status)
   getAllLocationsPlusResidents,
@@ -134,7 +128,4 @@ export default {
 
   // get resident (id, name, status, image, user note if any)
   getCharacter,
-
-  // insert/update resident note (need id & note)
-  insertNotesOnCharacter,
 };

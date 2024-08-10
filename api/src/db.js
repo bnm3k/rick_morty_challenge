@@ -26,11 +26,6 @@ CREATE TABLE IF NOT EXISTS character(
   created_at DATETIME
 );
 
-CREATE TABLE IF NOT EXISTS character_notes(
-  character_id INTEGER UNIQUE REFERENCES character(id),
-  notes STRING NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS episode(
   id INTEGER PRIMARY KEY,
   name STRING,
