@@ -27,4 +27,4 @@ COPY --chown=node:node . .
 EXPOSE 3001
 
 # # Run the application.
-CMD ["/usr/local/bin/node", "src/app.js", "--db-path", "${DB}", "--host", "0.0.0.0"]
+CMD ["/usr/local/bin/node", "src/app.js", "--db-path", "app.db", "--host", "0.0.0.0"]

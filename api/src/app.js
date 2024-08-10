@@ -7,6 +7,7 @@ import routes from "./routes.js";
 import { getConfig } from "./config.js";
 import { setupAPIDocs } from "./docs.js";
 
+import fs from "node:fs";
 import { fileURLToPath } from "url";
 import { dirname, join, resolve } from "path";
 
@@ -27,6 +28,11 @@ const main = async () => {
 
   const { dbPath, skipDbChecks } = config;
   const db = await getDB({ dbPath, skipDbChecks, log: app.log });
+  if (!fs.existsSync(dbPath)) {
+    throw new Error("db does not exist");
+  } else {
+    app.log.info({ dbPath }, `DB init OK`);
+  }
   app.decorate("db", db);
   app.decorate("config", config);
 

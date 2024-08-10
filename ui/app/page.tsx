@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import SearchResults from "@/app/search_results";
+import { rickMortyEndpoint } from "./common";
 
 function Header() {
   return (
@@ -11,7 +12,7 @@ function Header() {
             <a href="https://github.com/bnm3k/rick_morty_challenge">Code</a> |
           </li>
           <li>
-            <a href="http://localhost:3001/docs" target="_blank">
+            <a href={`${rickMortyEndpoint}/docs`} target="_blank">
               API Docs
             </a>{" "}
             |
@@ -29,7 +30,7 @@ function Header() {
 export default async function Page() {
   let locations;
   try {
-    const res = await fetch(`http://localhost:3001/locations`, {
+    const res = await fetch(`${rickMortyEndpoint}/locations`, {
       cache: "no-cache",
     });
     locations = await res.json();

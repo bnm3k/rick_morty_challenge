@@ -8,8 +8,24 @@ show. Specifically, the API avails endpoints for performing the following:
 - Full-text search for specific locations. The search can be carried out on the
   location names, residing character names or episode names
 - View more details about a given location
-- Given a character that resides in a location, add/update notes about that
-  character
+
+## Update - NextJS UI Added
+
+UI added, powered by next.js and what-nots. After running the backend API based
+on the instructions below (which powers search and caches content from the
+actual rickandmorty.api), `cd` into `ui` and launch the next js server:
+
+```bash
+cd ui
+npm run dev
+```
+
+Then go to `localhost:3000`. Notes are now persisted in browser local storage
+rather than in the backend.
+
+A docker image is also provided for the ui server. It runs `next build` for an
+optimized deployable server build. When building the ui image, make sure the
+backend API is running.
 
 ## Architectural and Design Decisions
 
@@ -36,13 +52,9 @@ optimizing for front-end development are not needed.
 
 **How is Data Managed?**: The project used DuckDB for persistence. DuckDB is
 embeddable therefore there is no need to run a separate database. The DB stores
-both the data from Rick & Morty plus user-provided notes. During initialization,
-all the data from the Rick & Morty is retrieved and stored in the DB. Therefore,
-during runtime, no additional requests are made to the Rick & Morty API. User
-notes are also stored in the database. Since we do not have user-account
-management (users cannot sign up/create accounts), storing the notes as is is a
-flaw and in future, this will be moved to client-side such as local storage on
-the browser.
+both the data from Rick & Morty. During initialization, all the data from the
+Rick & Morty is retrieved and stored in the DB. Therefore, during runtime, no
+additional requests are made to the Rick & Morty API.
 
 **When/How is Data Updated?**: as new Rick & Morty episodes are released, the
 data needs to be updated since we're caching it in the database rather than
@@ -52,19 +64,19 @@ fails, the app still proceeds but the data might be potentially stale.
 
 ## Project structure
 
-- `src/app.js`: contains code for starting up and running the server. It is also
-  where the configuration is.
-- `src/config.js`: holds the default configuration, dev config and setting up
-  and parsing of config passed via CLI arguments.
-- `src/controllers.js`: holds code for accessing and querying the data
-- `src/db.js`: holds the schema for the database, plus code for initializing the
-  DB by retrieving data from the Rick & Morty API and inserting it.
-- `src/docs.js`: holds setup code for the API documentations (which uses
+- `api/src/app.js`: contains code for starting up and running the server. It is
+  also where the configuration is.
+- `api/src/config.js`: holds the default configuration, dev config and setting
+  up and parsing of config passed via CLI arguments.
+- `api/src/controllers.js`: holds code for accessing and querying the data
+- `api/src/db.js`: holds the schema for the database, plus code for initializing
+  the DB by retrieving data from the Rick & Morty API and inserting it.
+- `api/src/docs.js`: holds setup code for the API documentations (which uses
   [swagger](https://swagger.io/))
-- `src/routes.js`: holds the REST API endpoints
-- `src/version.js`: retrieves version from package.json
-- `scripts/init-db.js`: script for setting up the database and seeding it with
-  data from the Rick & Morty API.
+- `api/src/routes.js`: holds the REST API endpoints
+- `api/src/version.js`: retrieves version from package.json
+- `api/scripts/init-db.js`: script for setting up the database and seeding it
+  with data from the Rick & Morty API.
 
 ## Deployment
 
@@ -92,7 +104,7 @@ However, for runtime, it is recommended that the configurations are set via CLI
 arguments:
 
 ```bash=
-> node src/app.js --help
+> node api/src/app.js --help
 Usage: app [options]
 
 Options:
@@ -130,7 +142,11 @@ node scripts/init-db.js
 
 The service can also be run within a docker container.
 
-To build the image (at the project root):
+To build the API image (at the project root):
+
+```bash
+cd api
+```
 
 ```bash
 docker build -t rick_morty_api .
@@ -140,7 +156,7 @@ To run:
 
 ```bash
 docker container run --rm -p 3001:3001 \
-  --name rick_morty rick_morty_api:latest
+  --name rick_morty_api rick_morty_api:latest
 ```
 
 The debian node image is used rather than alpine since getting DuckDB to work
