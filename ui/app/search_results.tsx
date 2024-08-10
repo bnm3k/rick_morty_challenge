@@ -3,12 +3,19 @@
 import Link from "next/link";
 import { useState } from "react";
 import { rickMortyEndpoint } from "@/app/common";
+import useSWR from "swr";
 
 function LocationList({ results }) {
   const { locations, resultType } = results;
+  const title = {
+    all: "All Locations",
+    name: "Locations with searched name",
+    episode: "Locations that appears in searched episode(s)",
+    character: "Locations where searched character(s) appeared",
+  };
   return (
     <section>
-      <h2>Locations ({resultType}) 📍:</h2>
+      <h2>{locations.length > 0 ? `${title[resultType]} 📍` : "No Results"}</h2>
       {locations.map((l) => {
         return (
           <Link href={`/location/${l.location_id}`} key={l.location_id}>
@@ -28,12 +35,23 @@ function SearchBox({ setResults, allLocations }) {
     setResults({ resultType: "all", locations: allLocations });
   }
   function handleSearch(formData: FormData) {
-    const query = formData.get("query");
+    const query: FormDataEntryValue | null = formData.get("query");
     const searchBy = formData.get("filter");
-    setResults({
-      resultType: searchBy,
-      locations: [],
-    });
+    if (query && searchBy) {
+      const params = new URLSearchParams({
+        [searchBy]: query,
+      }).toString();
+      const searchEndpoint = `${rickMortyEndpoint}/locations?${params}`;
+      fetch(searchEndpoint)
+        .then((res) => res.json())
+        .then((locations) => {
+          setResults({
+            resultType: searchBy,
+            locations,
+          });
+        })
+        .catch((err) => alert(err.message));
+    }
   }
 
   return (
@@ -48,9 +66,9 @@ function SearchBox({ setResults, allLocations }) {
               <input type="text" name="query" id="query" />
             </div>
             <div className="column">
-              <label htmlFor="filter">Filter by</label>
+              <label htmlFor="filter">Search by</label>
               <select name="filter" id="filter">
-                <option value="location">Location Name</option>
+                <option value="name">Location Name</option>
                 <option value="episode">Episode Name</option>
                 <option value="character">Character</option>
               </select>

@@ -7,15 +7,21 @@ function Header() {
       <h1>Rick & Morty Search</h1>
       <nav>
         <ul>
-          <li>Search locations that appear in the show:</li>
           <li>
             <a href="https://github.com/bnm3k/rick_morty_challenge">Code</a> |
           </li>
           <li>
-            <a href="localhost:3001/docs">Docs</a> |
+            <a href="http://localhost:3001/docs" target="_blank">
+              API Docs
+            </a>{" "}
+            |
           </li>
         </ul>
       </nav>
+      <p>
+        Search locations that appear in the show, add notes on your favourite
+        characters:
+      </p>
     </header>
   );
 }
