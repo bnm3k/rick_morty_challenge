@@ -1,10 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import Nav from "@/app/nav";
 
 function Header({ name }: { name: string }) {
   return (
     <header>
+      <Nav />
       <h1>{name}</h1>
     </header>
   );

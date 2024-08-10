@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import Nav from "@/app/nav";
 
 function Character({ id, name, status, image }) {
   const size = 190;
@@ -62,8 +63,9 @@ function Residents({ residents }) {
 function Header({ name, locationType }) {
   return (
     <header>
+      <Nav />
       <h1>Location: {name}</h1>
-      <h2>Type: {locationType}</h2>
+      {locationType && <h2>Type: {locationType}</h2>}
     </header>
   );
 }
