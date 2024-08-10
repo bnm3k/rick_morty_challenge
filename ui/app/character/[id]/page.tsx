@@ -18,7 +18,7 @@ function CharacterImage({ image, name }: { image: string; name: string }) {
   const size = 400;
   return (
     <Image
-      src={image}
+      src={`${rickMortyEndpoint}/public/images/${image}`}
       width={size}
       height={size}
       alt={`Picture of the character ${name} from the show Rick & Morty`}
@@ -65,14 +65,14 @@ export default async function Page({ params }: { params: { id: Number } }) {
     notFound();
   }
 
-  const { name, status, image } = data;
+  const { name, status, image_filename } = data;
 
   return (
     <main>
       <Header name={name} />
       <section className="row">
         <div className="column">
-          <CharacterImage image={image} name={name} />
+          <CharacterImage image={image_filename} name={name} />
         </div>
         <div className="column">
           <CharacterInfo info={data} />

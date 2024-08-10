@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import Nav from "@/app/nav";
+import { rickMortyEndpoint } from "@/app/common";
 
 function Character({ id, name, status, image }) {
   const size = 190;
@@ -8,7 +9,7 @@ function Character({ id, name, status, image }) {
     <a href={`/character/${id}`}>
       <div className="column">
         <Image
-          src={image}
+          src={`${rickMortyEndpoint}/public/images/${image}`}
           width={size}
           height={size}
           alt={`Picture of the character ${name} from the show Rick & Morty`}
@@ -25,7 +26,7 @@ function Row({ characters }) {
   return (
     <>
       <div className="row">
-        {characters.map(({ id, name, status, image }) => {
+        {characters.map(({ id, name, status, image_filename: image }) => {
           return (
             <Character
               key={id}
@@ -74,7 +75,9 @@ export default async function Page({ params }: { params: { id: Number } }) {
   const { id } = params;
   let data;
   try {
-    const res = await fetch(`http://localhost:3001/location/${id}`);
+    const res = await fetch(`${rickMortyEndpoint}/location/${id}`, {
+      cache: "no-cache",
+    });
     data = await res.json();
   } catch (err) {
     notFound();
