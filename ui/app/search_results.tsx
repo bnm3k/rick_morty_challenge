@@ -2,16 +2,18 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { rickMortyEndpoint } from "@/app/common";
 
-function LocationList({ locations }) {
+function LocationList({ results }) {
+  const { locations, resultType } = results;
   return (
     <section>
-      <h2>Locations 📍:</h2>
+      <h2>Locations ({resultType}) 📍:</h2>
       {locations.map((l) => {
         return (
           <Link href={`/location/${l.location_id}`} key={l.location_id}>
             <p>
-              {l.location_name} ({l.location_type})
+              {l.location_name} {l.location_type && `(${l.location_type})`}
             </p>
           </Link>
         );
@@ -20,11 +22,24 @@ function LocationList({ locations }) {
   );
 }
 
-function SearchBox({}) {
+function SearchBox({ setResults, allLocations }) {
+  function handleReset(e) {
+    e.preventDefault();
+    setResults({ resultType: "all", locations: allLocations });
+  }
+  function handleSearch(formData: FormData) {
+    const query = formData.get("query");
+    const searchBy = formData.get("filter");
+    setResults({
+      resultType: searchBy,
+      locations: [],
+    });
+  }
+
   return (
     <section>
       <h2>Search 🔍:</h2>
-      <form>
+      <form action={handleSearch}>
         <fieldset>
           <legend>...</legend>
           <div className="row">
@@ -43,10 +58,10 @@ function SearchBox({}) {
           </div>
           <div className="row">
             <div className="column">
-              <input type="submit" value="Send" />
+              <input type="submit" value="Submit" />
             </div>
             <div className="column">
-              <button>Reset</button>
+              <button onClick={handleReset}>Reset</button>
             </div>
           </div>
         </fieldset>
@@ -55,12 +70,15 @@ function SearchBox({}) {
   );
 }
 
-export default function Results({ locations }) {
-  const [resultType, setResultType] = useState("all");
+export default function Results({ locations: allLocations }) {
+  const [results, setResults] = useState({
+    resultType: "all",
+    locations: allLocations,
+  });
   return (
     <>
-      <SearchBox />
-      <LocationList locations={locations} />
+      <SearchBox setResults={setResults} allLocations={allLocations} />
+      <LocationList results={results} />
     </>
   );
 }
