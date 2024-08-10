@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS character(
   gender STRING CHECK (gender in ('Female', 'Male', 'Genderless', 'unknown')),
   origin_location INTEGER,
   last_known_location INTEGER,
-  image STRING,
+  image_filename STRING, -- not null
   created_at DATETIME
 );
 

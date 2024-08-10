@@ -83,7 +83,7 @@ const getLocation = async (db, locationID) => {
       select
           l.id as location_id,
           list(
-            {'id': c.id, 'name': c.name, 'status': c.status, 'image': c.image}
+            {'id': c.id, 'name': c.name, 'status': c.status, 'image_filename': c.image_filename}
           ) as residents
       from location l
       join character c on l.id = c.last_known_location
@@ -102,7 +102,7 @@ const getLocation = async (db, locationID) => {
 const getCharacter = async (db, characterID) => {
   const sql = `
   select
-      id, name, status, image, species, type, gender,
+      id, name, status, image_filename, species, type, gender,
 
       last_known_location as last_known_location_id,
       (select name from location where id = last_known_location)
@@ -123,9 +123,9 @@ export default {
   searchLocationsByEpisodeName,
   searchLocationsByResidentCharacters,
 
-  // get location (id, name and type) plus residents (id, name, status, image)
+  // get location (id, name and type) plus residents (id, name, status, image_filename)
   getLocation,
 
-  // get resident (id, name, status, image, user note if any)
+  // get resident (id, name, status, image_filename, user note if any)
   getCharacter,
 };

@@ -38,12 +38,11 @@ const routes = async (app, options) => {
                 "Current status of the character in the show (Alive, Dead, Unknown)",
               example: "Alive",
             },
-            image: {
+            image_filename: {
               type: "string",
               format: "uri",
-              description: "URL to the character's image",
-              example:
-                "https://rickandmortyapi.com/api/character/avatar/1.jpeg",
+              description: "Image filename",
+              example: "1.jpeg",
             },
             species: {
               type: ["string", "null"],
@@ -148,12 +147,11 @@ const routes = async (app, options) => {
                           description: "Current status of the resident",
                           example: "Alive",
                         },
-                        image: {
+                        image_filename: {
                           type: "string",
                           format: "uri",
-                          description: "URL to the resident's image",
-                          example:
-                            "https://rickandmortyapi.com/api/character/avatar/1.jpeg",
+                          description: "Image filename",
+                          example: "1.jpeg",
                         },
                       },
                     },
