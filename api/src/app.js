@@ -1,4 +1,5 @@
 import Fastify from "fastify";
+import cors from "@fastify/cors";
 
 import { getDB } from "./db.js";
 import routes from "./routes.js";
@@ -10,6 +11,7 @@ const main = async () => {
   let config = getConfig();
 
   const app = Fastify({ logger: config.logger });
+  await app.register(cors, { origin: true });
   const { dbPath, skipDbChecks } = config;
   const db = await getDB({ dbPath, skipDbChecks, log: app.log });
   app.decorate("db", db);
